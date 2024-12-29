@@ -9,6 +9,14 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm # path which should be cached. Will be stored in gh cloud
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+          # key will be used for retrieving the cache in the future. It also indicates when the cache should be discarded, because it must be re-created, e.g. when some dependencies have changed. It should be a dynamic value
+          # hasFiles() function will hash the files and return a unique value.
+          # hashed value will changed whenever the file changes (context changes)
       - name: Install dependencies
         run: npm ci
       - name: Lint code
@@ -23,6 +31,11 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
       - name: Build website
